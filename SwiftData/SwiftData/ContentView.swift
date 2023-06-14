@@ -6,21 +6,59 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+  //  @State private var users = ["Paul", "Taylor", "Adele"]
+  @Environment(\.modelContext) private var context
+  @Query var users: [User]
+  @State var newUser: String = ""
+  
+  var body: some View {
+    NavigationStack {
+      List {
+        ForEach(users, id: \.self) { user in
+          Text(user.name)
         }
-        .padding()
+        .onDelete(perform: delete)
+        TextField("Enter a new name", text: $newUser)
+          .autocorrectionDisabled()
+      }
+      .toolbar {
+        editButton
+      }
+      .navigationTitle("Users")
+      .navigationBarTitleDisplayMode(.large)
     }
+  }
+  
+  var editButton: some View {
+    Button {
+      createUser()
+    } label: {
+      Image(systemName: "plus.circle.fill")
+    }
+  }
+  
+  func delete(at offsets: IndexSet) {
+    withAnimation {
+      offsets.forEach { index in
+        context.delete(users[index])
+        try? context.save()
+      }
+    }
+  }
+  
+  func createUser() {
+    let user = User(id: UUID().uuidString, name: newUser)
+    context.insert(user)
+    try? context.save()
+    newUser = ""
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }

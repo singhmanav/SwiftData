@@ -11,7 +11,10 @@ import SwiftUI
 struct SwiftDataApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          ContentView()
+            .modelContainer(for: [
+                User.self,
+            ])
         }
     }
 }
