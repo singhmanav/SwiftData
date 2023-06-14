@@ -25,18 +25,21 @@ struct ContentView: View {
           .autocorrectionDisabled()
       }
       .toolbar {
-        editButton
+        ToolbarItem(placement: .navigationBarTrailing) {
+            EditButton()
+        }
+        ToolbarItem {
+          addButton
+        }
       }
       .navigationTitle("Users")
       .navigationBarTitleDisplayMode(.large)
     }
   }
   
-  var editButton: some View {
-    Button {
-      createUser()
-    } label: {
-      Image(systemName: "plus.circle.fill")
+  var addButton: some View {
+    Button(action: createUser) {
+        Label("Add Item", systemImage: "plus")
     }
   }
   
@@ -50,10 +53,12 @@ struct ContentView: View {
   }
   
   func createUser() {
-    let user = User(id: UUID().uuidString, name: newUser)
-    context.insert(user)
-    try? context.save()
-    newUser = ""
+    withAnimation {
+      let user = User(id: UUID().uuidString, name: newUser)
+      context.insert(user)
+      try? context.save()
+      newUser = ""
+    }
   }
 }
 
