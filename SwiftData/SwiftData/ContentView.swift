@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-  //  @State private var users = ["Paul", "Taylor", "Adele"]
   @Environment(\.modelContext) private var context
   @Query var users: [User]
   @State var newUser: String = ""
